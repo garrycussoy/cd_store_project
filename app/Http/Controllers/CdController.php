@@ -9,6 +9,69 @@ use App\CategoryModel;
 class CdController extends Controller
 {
     /**
+     * The following method is used to get all available CD's list (can be filtered)
+     * 
+     * @param array $request Contains all filter specifications. The specifications are: title, category, 
+     * min_price, max_price, min_quantity, and max_quantity)
+     * @return array Return all available CD's (and those which satisfy the filter), which have not been soft 
+     * deleted. Each Cd will provide information about id, category_id, category, title, rate, quantity, 
+     * created_at, updated_at, and deleted_at)
+     */
+    public function get(Request $request)
+    {
+        /* Query all available CD's */
+        $cds_list = CdModel::where("deleted_at", null);
+
+        /*---------- Filter Proccess ----------*/
+        /* By Title */
+        if ($request->get("title") != null) {
+            $cds_list = $cds_list->where("title", "LIKE", "%" . $request->get("title") . "%");
+        }
+
+        /* By Category */
+        if ($request->get("category") != null) {
+            $category = CategoryModel::where("name", $request->get("category"))->first();
+
+            if (count($category) != 0 and $category->deleted_at == null) {
+                /* Handling case when the category matched */
+                $cds_list = $cds_list->where("category_id", $category->id);
+            } elseif ($category->deleted_at != null) {
+                /* Handling case when the category has been soft deleted */
+                $cds_list = $cds_list->where("category_id", 0);
+            }
+        }
+
+        /* By Price */
+        if ($request->get("min_price") != null) {
+            /* Searching CD which price greater than or equal to inputted value */
+            $cds_list = $cds_list->where("rate", ">=", $request->get("min_price"));
+        }
+        if ($request->get("max_price") != null) {
+            /* Searching CD which price lesser than or equal to inputted value */
+            $cds_list = $cds_list->where("rate", "<=", $request->get("max_price"));
+        }
+
+        /* By Quantity */
+        if ($request->get("min_quantity") != null) {
+            /* Searching CD which quantity greater than or equal to inputted value */
+            $cds_list = $cds_list->where("quantity", ">=", $request->get("min_quantity"));
+        }
+        if ($request->get("max_quantity") != null) {
+            /* Searching CD which quantity lesser than or equal to inputted value */
+            $cds_list = $cds_list->where("quantity", "<=", $request->get("max_quantity"));
+        }
+
+        /* Prepare and return the response */
+        $cds_list = $cds_list->get();
+        foreach ($cds_list as $cd) {
+            /* Searching category name */
+            $cd_category = CategoryModel::where("id", $cd->category_id)->first();
+            $cd["category"] = $cd_category->name;
+        }
+        return response($cds_list, 200)->header('Content-Type', "application/json");
+    }
+    
+    /**
      * The following method is used to insert new CD
      * 
      * @param array $request Contains: category_id, title, rate, and quantity
