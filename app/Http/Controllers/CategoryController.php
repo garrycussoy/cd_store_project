@@ -108,7 +108,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * The following method is used to change a category name
+     * The following method is used to soft delete a category
      * 
      * @param integer $id Category ID
      * @return string Return message: whether the proccess is success or not (if not, it will return the reason

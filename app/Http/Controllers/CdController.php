@@ -189,4 +189,43 @@ class CdController extends Controller
         $response["cd"]["updated_at"] = $cd->updated_at;
         return response($response, 200)->header('Content-Type', "application/json");
     }
+
+    /**
+     * The following method is used to soft delete a CD
+     * 
+     * @param integer $id CD ID
+     * @return string Return message: whether the proccess is success or not (if not, it will return the reason
+     * why the proccess failed)
+     * @return array Return cd: all information about the deleted CD (id, category_id, category, title, rate, 
+     * quantity, created_at, and deleted_at)
+     */
+    public function softDelete($id)
+    {
+        /* Searching for specified CD */
+        $related_cd = CdModel::where("id", $id)->first();
+        if (count($related_cd) == 0 or $related_cd->deleted_at != null) {
+            /* Category doesn't exist or has been soft deleted */
+            $response["message"] = "The CD you are looking for doesn't exist";
+            return response($response, 404)->header('Content-Type', "application/json");
+        } else {
+            /* Update the database*/
+            $related_cd->deleted_at = date("Y-m-d H:i:s");
+            $related_cd->save();
+
+            /* Find category name */
+            $related_category = CategoryModel::where("id", $related_cd->category_id)->first();
+        }
+
+        /* Prepare and return the response */
+        $response["message"] = "Success deleting CD";
+        $response["cd"]["id"] = $related_cd->id;
+        $response["cd"]["category_id"] = $related_cd->category_id;
+        $response["cd"]["category"] = $related_category->name;
+        $response["cd"]["title"] = $related_cd->title;
+        $response["cd"]["rate"] = $related_cd->rate;
+        $response["cd"]["quantity"] = $related_cd->quantity;
+        $response["cd"]["created_at"] = $related_cd->created_at;
+        $response["cd"]["deleted_at"] = $related_cd->deleted_at;
+        return response($response, 200)->header('Content-Type', "application/json");
+    }
 }

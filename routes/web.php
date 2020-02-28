@@ -32,3 +32,5 @@ Route::get('/cd','CdController@get');
 Route::post('/cd','CdController@post');
 /* Edit information of a CD */
 Route::put('/cd/{id}','CdController@put');
+/* Soft delete a CD */
+Route::delete('/cd/{id}','CdController@softDelete');
