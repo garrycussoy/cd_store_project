@@ -15,7 +15,18 @@ class CategoryController extends Controller
      */
     public function get()
     {
-        return "Horraaay, we made it!";
+        /* Query all categories */
+        $categories_list = CategoryModel::all();
+
+        /* Filter available categories only (have not been deleted) */
+        $available_categories = array();
+        foreach ($categories_list as $category) {
+            if (!$category->deleted_at) {
+                array_push($available_categories, $category);
+            }
+        }
+
+        return response($available_categories, 200)->header('Content-Type', "application/json");
     }
 
     /**
