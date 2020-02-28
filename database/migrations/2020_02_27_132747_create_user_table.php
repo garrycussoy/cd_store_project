@@ -18,7 +18,7 @@ class CreateUserTable extends Migration
             $table->string('name');
             $table->string('identity_type');
             $table->string('identity_number');
-            $table->string('phone_number');
+            $table->string('phone_number')->unique();
             $table->string('address');
             $table->timestamps();
             $table->softDeletes();
