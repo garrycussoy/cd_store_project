@@ -74,7 +74,8 @@ class CategoryController extends Controller
      * @param integer $id Category ID
      * @return string Return message: whether the proccess is success or not (if not, it will return the reason
      * why the proccess failed)
-     * @return array Return category: all information about the updated category (id, name, and created_at, updated_at)
+     * @return array Return category: all information about the updated category (id, name, and created_at, and
+     * updated_at)
      */
     public function put(Request $request, $id)
     {
@@ -82,7 +83,7 @@ class CategoryController extends Controller
         if ($request->input("name")) {
             /* Check whether specified category exist or not */
             $related_category = CategoryModel::where("id", $id)->first();
-            if (count($related_category) == 0) {
+            if (count($related_category) == 0 or $related_category->deleted_at != null) {
                 $response["message"] = "The category you are looking for doesn't exist";
                 return response($response, 404)->header('Content-Type', "application/json");
             } else {
@@ -103,6 +104,38 @@ class CategoryController extends Controller
         $response["category"]["name"] = $related_category->name;
         $response["category"]["created_at"] = $related_category->created_at;
         $response["category"]["updated_at"] = $related_category->updated_at;
+        return response($response, 200)->header('Content-Type', "application/json");
+    }
+
+    /**
+     * The following method is used to change a category name
+     * 
+     * @param integer $id Category ID
+     * @return string Return message: whether the proccess is success or not (if not, it will return the reason
+     * why the proccess failed)
+     * @return array Return category: all information about the deleted category (id, name, and created_at, and
+     * deleted_at)
+     */
+    public function softDelete($id)
+    {
+        /* Searching for specified category */
+        $related_category = CategoryModel::where("id", $id)->first();
+        if (count($related_category) == 0 or $related_category->deleted_at != null) {
+            /* Category doesn't exist or has been soft deleted */
+            $response["message"] = "The category you are looking for doesn't exist";
+            return response($response, 404)->header('Content-Type', "application/json");
+        } else {
+            /* Update the database*/
+            $related_category->deleted_at = date("Y-m-d H:i:s");
+            $related_category->save();
+        }
+
+        /* Prepare and return the response */
+        $response["message"] = "Success deleting category";
+        $response["category"]["id"] = $related_category->id;
+        $response["category"]["name"] = $related_category->name;
+        $response["category"]["created_at"] = $related_category->created_at;
+        $response["category"]["deleted_at"] = $related_category->deleted_at;
         return response($response, 200)->header('Content-Type', "application/json");
     }
 }

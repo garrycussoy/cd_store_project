@@ -22,3 +22,5 @@ Route::get('/category','CategoryController@get');
 Route::post('/category','CategoryController@post');
 /* Edit a category specified by its ID */
 Route::put('/category/{id}','CategoryController@put');
+/* Soft delete a category specified by its ID */
+Route::delete('/category/{id}','CategoryController@softDelete');
