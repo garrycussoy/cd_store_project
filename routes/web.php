@@ -20,3 +20,5 @@ $router->get('/', function () use ($router) {
 Route::get('/category','CategoryController@get');
 /* Add new category */
 Route::post('/category','CategoryController@post');
+/* Edit a category specified by its ID */
+Route::put('/category/{id}','CategoryController@put');

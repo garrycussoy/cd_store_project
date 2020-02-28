@@ -66,4 +66,43 @@ class CategoryController extends Controller
         $response["category"]["created_at"] = $new_category->created_at;
         return response($response, 200)->header('Content-Type', "application/json");
     }
+
+    /**
+     * The following method is used to change a category name
+     * 
+     * @param array $request Contains name key
+     * @param integer $id Category ID
+     * @return string Return message: whether the proccess is success or not (if not, it will return the reason
+     * why the proccess failed)
+     * @return array Return category: all information about the updated category (id, name, and created_at, updated_at)
+     */
+    public function put(Request $request, $id)
+    {
+        /* Check whether the request has empty field or not */
+        if ($request->input("name")) {
+            /* Check whether specified category exist or not */
+            $related_category = CategoryModel::where("id", $id)->first();
+            if (count($related_category) == 0) {
+                $response["message"] = "The category you are looking for doesn't exist";
+                return response($response, 404)->header('Content-Type', "application/json");
+            } else {
+                /* Update the database */
+                $related_category->name = $request->input("name");
+                $related_category->save();
+            }
+
+        } else {
+            /* Return the reason why the proccess failed */
+            $response["message"] = "Name field is required";
+            return response($response, 400)->header('Content-Type', "application/json");
+        }
+
+        /* Prepare and return the response */
+        $response["message"] = "Success editting category";
+        $response["category"]["id"] = $related_category->id;
+        $response["category"]["name"] = $related_category->name;
+        $response["category"]["created_at"] = $related_category->created_at;
+        $response["category"]["updated_at"] = $related_category->updated_at;
+        return response($response, 200)->header('Content-Type', "application/json");
+    }
 }
