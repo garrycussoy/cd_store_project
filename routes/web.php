@@ -30,3 +30,5 @@ Route::delete('/category/{id}','CategoryController@softDelete');
 Route::get('/cd','CdController@get');
 /* Insert new CD */
 Route::post('/cd','CdController@post');
+/* Edit information of a CD */
+Route::put('/cd/{id}','CdController@put');

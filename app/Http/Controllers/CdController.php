@@ -99,6 +99,12 @@ class CdController extends Controller
                 return response($response, 404)->header('Content-Type', "application/json");
             }
 
+            /* Positivity constraint */
+            if ($request->input("rate") < 0 or $request->input("quantity") < 0) {
+                $response["message"] = "Rate and quantity cannot take negative value";
+                return response($response, 422)->header('Content-Type', "application/json");
+            }
+
             /* Add new CD to database */
             $new_cd = new CdModel();
             $new_cd->category_id = $request->input("category_id");
@@ -121,6 +127,66 @@ class CdController extends Controller
         $response["cd"]["rate"] = $new_cd->rate;
         $response["cd"]["quantity"] = $new_cd->quantity;
         $response["cd"]["created_at"] = $new_cd->created_at;
+        return response($response, 200)->header('Content-Type', "application/json");
+    }
+
+    /**
+     * The following method is used to edit information of a selected CD
+     * 
+     * @param array $request Contains: category_id, title, rate, and quantity
+     * @param integer $id CD ID
+     * @return string Return message: whether the proccess is success or not (if not, it will return the reason
+     * why the proccess failed)
+     * @return array Return cd: all information about the inserted CD (id, category, category_id, title, rate,
+     * quantity, created_at, and updated_at)
+     */
+    public function put(Request $request, $id)
+    {
+        /* Check whether the request has empty field or not */
+        if ($request->input("category_id") != null and $request->input("title") != null and $request->input("rate") != null and $request->input("quantity") != null) {
+            /* Searching the CD */
+            $cd = CdModel::where("id", $id)->where("deleted_at", null)->get();
+            if (count($cd) == 0) {
+                $response["message"] = "The CD you are looking for doesn't exist";
+                return response($response, 404)->header('Content-Type', "application/json");
+            }
+
+            /* Check for available category */
+            $related_category = CategoryModel::where("id", $request->input("category_id"))->where("deleted_at", null)->get();
+            if (count($related_category) == 0) {
+                $response["message"] = "Category doesn't exist";
+                return response($response, 404)->header('Content-Type', "application/json");
+            }
+
+            /* Positivity constraint */
+            if ($request->input("rate") < 0 or $request->input("quantity") < 0) {
+                $response["message"] = "Rate and quantity cannot take negative value";
+                return response($response, 422)->header('Content-Type', "application/json");
+            }
+
+            /* Edit the CD */
+            $cd = $cd[0];
+            $cd->category_id = $request->input("category_id");
+            $cd->title = $request->input("title");
+            $cd->rate = $request->input("rate");
+            $cd->quantity = $request->input("quantity");
+            $cd->save();
+        } else {
+            /* Return the reason why the proccess failed */
+            $response["message"] = "All fields are required and cannot be empty";
+            return response($response, 400)->header('Content-Type', "application/json");
+        }
+
+        /* Prepare and return the response */
+        $response["message"] = "Success editting the CD";
+        $response["cd"]["id"] = $cd->id;
+        $response["cd"]["category_id"] = $cd->category_id;
+        $response["cd"]["category"] = $related_category[0]->name;
+        $response["cd"]["title"] = $cd->title;
+        $response["cd"]["rate"] = $cd->rate;
+        $response["cd"]["quantity"] = $cd->quantity;
+        $response["cd"]["created_at"] = $cd->created_at;
+        $response["cd"]["updated_at"] = $cd->updated_at;
         return response($response, 200)->header('Content-Type', "application/json");
     }
 }
