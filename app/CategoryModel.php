@@ -8,7 +8,7 @@ class CategoryModel extends Model
 {
     /**
      * The attributes that will be assigned when user add new category
-     * @var array
+     * @var object
      */
     protected $table = 'category';
 }

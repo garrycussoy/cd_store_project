@@ -24,3 +24,9 @@ Route::post('/category','CategoryController@post');
 Route::put('/category/{id}','CategoryController@put');
 /* Soft delete a category specified by its ID */
 Route::delete('/category/{id}','CategoryController@softDelete');
+
+/* ---------- CD Route ---------- */
+/* Get all available CD's */
+Route::get('/cd','CdController@get');
+/* Insert new CD */
+Route::post('/cd','CdController@post');
