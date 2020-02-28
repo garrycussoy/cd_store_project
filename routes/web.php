@@ -14,3 +14,9 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+/* ---------- Category Route ---------- */
+/* Get all available categories */
+Route::get('/category','CategoryController@get');
+/* Add new category */
+Route::post('/category','CategoryController@post');
