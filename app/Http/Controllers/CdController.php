@@ -204,7 +204,7 @@ class CdController extends Controller
         /* Searching for specified CD */
         $related_cd = CdModel::where("id", $id)->first();
         if (count($related_cd) == 0 or $related_cd->deleted_at != null) {
-            /* Category doesn't exist or has been soft deleted */
+            /* CD doesn't exist or has been soft deleted */
             $response["message"] = "The CD you are looking for doesn't exist";
             return response($response, 404)->header('Content-Type', "application/json");
         } else {
@@ -227,5 +227,31 @@ class CdController extends Controller
         $response["cd"]["created_at"] = $related_cd->created_at;
         $response["cd"]["deleted_at"] = $related_cd->deleted_at;
         return response($response, 200)->header('Content-Type', "application/json");
+    }
+
+    /**
+     * The following method is used to get CD information based on CD ID
+     * 
+     * @param integer $id CD ID
+     * @return string Return message: only if the CD not found
+     * @return array Return all information about the CD (id, category_id, category, title, rate, 
+     * quantity, created_at, updated_at, and deleted_at)
+     */
+    public function getById($id)
+    {
+        /* Searching for specified CD */
+        $related_cd = CdModel::where("id", $id)->first();
+        if (count($related_cd) == 0 or $related_cd->deleted_at != null) {
+            /* CD doesn't exist or has been soft deleted */
+            $response["message"] = "The CD you are looking for doesn't exist";
+            return response($response, 404)->header('Content-Type', "application/json");
+        }
+
+        /* Find category name */
+        $related_category = CategoryModel::where("id", $related_cd->category_id)->first();
+
+        /* Prepare and return the response */
+        $related_cd["category"] = $related_category->name;
+        return response($related_cd, 200)->header('Content-Type', "application/json");
     }
 }
