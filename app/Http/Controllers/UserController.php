@@ -8,6 +8,52 @@ use App\UserModel;
 class UserController extends Controller
 {   
     /**
+     * The following method is used to get all registered users list (can be filtered) who have not been
+     * banned (soft delete)
+     * 
+     * @param array $request Contains all filter specifications. The specifications are: name, identity_type,
+     * identity_number, phone_number, and address)
+     * @return array Return all registered users (and those which satisfy the filter), which have not been soft 
+     * deleted. Each user will provide information about id, name, identity_type, identity_number, phone_number, 
+     * address, created_at, updated_at, and deleted_at)
+     */
+    public function get(Request $request)
+    {
+        /* Query all registered users */
+        $users_list = UserModel::where("deleted_at", null);
+
+        /*---------- Filter Proccess ----------*/
+        /* By Name */
+        if ($request->get("name") != null) {
+            $users_list = $users_list->where("name", "LIKE", "%" . $request->get("name") . "%");
+        }
+
+        /* By Identity Type */
+        if ($request->get("identity_type") != null) {
+            $users_list = $users_list->where("identity_type", $request->get("identity_type"));
+        }
+
+        /* By Identity Number */
+        if ($request->get("identity_number") != null) {
+            $users_list = $users_list->where("identity_number", "LIKE", "%" . $request->get("identity_number") . "%");
+        }
+
+        /* By Phone Number */
+        if ($request->get("phone_number") != null) {
+            $users_list = $users_list->where("phone_number", "LIKE", "%" . $request->get("phone_number") . "%");
+        }
+
+        /* By Address */
+        if ($request->get("address") != null) {
+            $users_list = $users_list->where("address", "LIKE", "%" . $request->get("address") . "%");
+        }
+
+        /* Prepare and return the response */
+        $users_list = $users_list->get();
+        return response($users_list, 200)->header('Content-Type', "application/json");
+    }
+
+    /**
      * The following method is used to add new user
      * 
      * @param array $request Contains: name, identity_type, identity_number, phone_number, and address
