@@ -87,6 +87,16 @@ class CategoryController extends Controller
                 $response["message"] = "The category you are looking for doesn't exist";
                 return response($response, 404)->header('Content-Type', "application/json");
             } else {
+                /* Check for uniqueness */
+                $other_category = CategoryModel::where("name", $request->input("name"))->get();
+                if (count($other_category) != 0) {
+                    if ($other_category[0]->name != $related_category->name) {
+                        /* Case when the category has already exist */
+                        $response["message"] = "This category name has already exist";
+                        return response($response, 409)->header('Content-Type', "application/json");
+                    }
+                }
+
                 /* Update the database */
                 $related_category->name = $request->input("name");
                 $related_category->save();
