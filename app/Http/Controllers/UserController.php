@@ -223,4 +223,25 @@ class UserController extends Controller
         $response["user"]["deleted_at"] = $related_user->deleted_at;
         return response($response, 200)->header('Content-Type', "application/json");
     }
+
+    /**
+     * The following method is used to get user's information based on user ID
+     * 
+     * @param integer $id User ID
+     * @return string Return message: only if the user not found
+     * @return array Return all information about the user (id, name, identity_type, identity_number, 
+     * phone_number, address, created_at, updated_at, and deleted_at)
+     */
+    public function getById($id)
+    {
+        /* Searching for related user */
+        $related_user = UserModel::where("id", $id)->first();
+        if (count($related_user) == 0 or $related_user->deleted_at != null) {
+            /* User doesn't exist or has been banned (soft deleted) */
+            $response["message"] = "The user you are looking for is not found";
+            return response($response, 404)->header('Content-Type', "application/json");
+        }
+
+        return response($related_user, 200)->header('Content-Type', "application/json");
+    }
 }
