@@ -48,3 +48,13 @@ Route::put('/user/{id}','UserController@put');
 Route::delete('/user/{id}','UserController@softDelete');
 /* Get information of a user based on user ID */
 Route::get('/user/{id}','UserController@getById');
+
+/* ---------- Rent Route ---------- */
+/* Get all transactions */
+Route::get('/rent','RentController@get');
+/* Start a transaction */
+Route::post('/rent','RentController@startRent');
+/* End a transaction (when user return the books he/she borrowed) */
+Route::put('/rent/{id}','RentController@endRent');
+/* Get transaction detail based on Rent ID */
+Route::get('/rent/{id}','RentController@getById');

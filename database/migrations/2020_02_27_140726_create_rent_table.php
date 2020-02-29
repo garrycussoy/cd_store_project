@@ -17,8 +17,8 @@ class CreateRentTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->boolean('returned')->default(False);
-            $table->timestamp('borrowed_time');
-            $table->timestamp('returned_time')->nullable();
+            $table->dateTime('borrowed_time');
+            $table->dateTime('returned_time')->nullable();
             $table->integer('total_items');
             $table->bigInteger('total_price');
 
