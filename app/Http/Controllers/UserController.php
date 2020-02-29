@@ -186,4 +186,41 @@ class UserController extends Controller
         $response["user"]["updated_at"] = $selected_user->updated_at;
         return response($response, 200)->header('Content-Type', "application/json");
     }
+
+    /**
+     * The following method is used to banned a user (soft delete)
+     * 
+     * @param integer $id User ID
+     * @return string Return message: whether the proccess is success or not (if not, it will return the reason
+     * why the proccess failed)
+     * @return array Return user: all information about the deleted user (id, name, identity_type, 
+     * identity_number, phone_number, address, created_at, and deleted_at)
+     */
+    public function softDelete($id)
+    {
+        /* Searching related user */
+        $related_user = UserModel::where("id", $id)->where("deleted_at", null)->first();
+        
+        if (count($related_user) == 0) {
+            /* User doesn't exist or has been banned */
+            $response["message"] = "The user you are looking for not found";
+            return response($response, 404)->header('Content-Type', "application/json");
+        } else {
+            /* Update the database*/
+            $related_user->deleted_at = date("Y-m-d H:i:s");
+            $related_user->save();
+        }
+
+        /* Prepare and return the response */
+        $response["message"] = "Success delete a user";
+        $response["user"]["id"] = $related_user->id;
+        $response["user"]["name"] = $related_user->name;
+        $response["user"]["identity_type"] = $related_user->identity_type;
+        $response["user"]["identity_number"] = $related_user->identity_number;
+        $response["user"]["phone_number"] = $related_user->phone_number;
+        $response["user"]["address"] = $related_user->address;
+        $response["user"]["created_at"] = $related_user->created_at;
+        $response["user"]["deleted_at"] = $related_user->deleted_at;
+        return response($response, 200)->header('Content-Type', "application/json");
+    }
 }
