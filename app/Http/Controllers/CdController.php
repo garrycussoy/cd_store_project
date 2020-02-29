@@ -151,6 +151,19 @@ class CdController extends Controller
                 return response($response, 404)->header('Content-Type', "application/json");
             }
 
+            /* Check for uniqueness */
+            $other_cd = CdModel::where("category_id", $request->input("category_id"))->where("title", $request->input("title"))->get();
+            if (count($other_cd) != 0) {
+                if (
+                    $other_cd[0]->category_id != $cd[0]->category_id
+                    or $other_cd[0]->title != $cd[0]->title
+                ) {
+                    /* Handling case for duplicate entry */
+                    $response["message"] = "The CD you want to insert has already exist";
+                    return response($response, 409)->header('Content-Type', "application/json");
+                }
+            }
+
             /* Check for available category */
             $related_category = CategoryModel::where("id", $request->input("category_id"))->where("deleted_at", null)->get();
             if (count($related_category) == 0) {
