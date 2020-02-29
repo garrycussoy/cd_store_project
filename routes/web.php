@@ -36,3 +36,15 @@ Route::put('/cd/{id}','CdController@put');
 Route::delete('/cd/{id}','CdController@softDelete');
 /* Get information of a CD based on CD ID */
 Route::get('/cd/{id}','CdController@getById');
+
+/* ---------- User Route ---------- */
+/* Get all registered users who have not been banned */
+Route::get('/user','UserController@get');
+/* Add new user */
+Route::post('/user','UserController@post');
+/* Edit information of a user */
+Route::put('/user/{id}','UserController@put');
+/* Banned a user (soft delete) */
+Route::delete('/user/{id}','UserController@softDelete');
+/* Get information of a user based on user ID */
+Route::get('/user/{id}','UserController@getById');
