@@ -12,7 +12,7 @@ use App\RentDetailModel;
 class RentController extends Controller
 {   
     /**
-     * The following method is used to insert new CD
+     * The following method is used to begin a transaction
      * 
      * @param array $request Contains: user_id and rent_detail. rent_detail is an array where each element
      * contains: cd_id, total_items, and total_prices
@@ -101,6 +101,59 @@ class RentController extends Controller
         $response["rent"]["total_items"] = $new_rent->total_items;
         $response["rent"]["total_price"] = $new_rent->total_price;
         $response["rent"]["rent_detail"] = $request->json()->get("rent_detail");
+        return response($response, 200)->header('Content-Type', "application/json");
+    }
+
+    /**
+     * The following method is used to end a transaction
+     * 
+     * @param integer $id Rent ID
+     * @return string message: Give succes/failed message (and give the reason why it is failed)
+     * @return array Return rent: all information about the transaction. It contains id, user_id, returned, 
+     * borrowed_time, returned_time, total_items, total_price, and pay_to_price
+     */
+    public function endRent($id)
+    {
+        /* Search for related rent */
+        $related_rent = RentModel::where("id", $id)->where("returned", False)->first();
+        if (count($related_rent) == 0) {
+            $response["message"] = "The transaction you are looking for doesn't exist";
+            return response($response, 404)->header('Content-Type', "application/json");
+        }
+
+        /* Calculate price_to_pay */
+        $borrowed_time = date_create($related_rent->borrowed_time);
+        $returned_time = date_create();
+        $days_count = date_diff($borrowed_time, $returned_time);
+        $days_count = $days_count->d;
+        $price_to_pay = ($days_count + 1) * $related_rent->total_price;
+
+        /* Update the transaction */
+        $related_rent->returned = True;
+        $related_rent->returned_time = $returned_time;
+        $related_rent->price_to_pay = $price_to_pay;
+        $related_rent->timestamps = False;
+        $related_rent->save();
+        
+        /* Search related detail rent and update CD quantity */
+        $related_rent_detail_list = RentDetailModel::where("rent_id", $id)->get();
+        foreach ($related_rent_detail_list as $related_detail) {
+            /* Search related CD */
+            $related_cd = CdModel::where("id", $related_detail->cd_id)->first();
+            $related_cd->quantity += $related_detail->total_items;
+            $related_cd->save();
+        }
+
+        /* Prepare and return the response */
+        $response["message"] = "Transaction ended successfully";
+        $response["rent"]["id"] = $related_rent->id;
+        $response["rent"]["user_id"] = $related_rent->user_id;
+        $response["rent"]["returned"] = $related_rent->returned;
+        $response["rent"]["borrowed_time"] = $related_rent->borrowed_time;
+        $response["rent"]["returned_time"] = $related_rent->returned_time;
+        $response["rent"]["total_items"] = $related_rent->total_items;
+        $response["rent"]["total_price"] = $related_rent->total_price;
+        $response["rent"]["total_price"] = $related_rent->price_to_pay;
         return response($response, 200)->header('Content-Type', "application/json");
     }
 }

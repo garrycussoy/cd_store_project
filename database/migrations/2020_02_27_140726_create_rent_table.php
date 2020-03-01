@@ -21,6 +21,7 @@ class CreateRentTable extends Migration
             $table->dateTime('returned_time')->nullable();
             $table->integer('total_items');
             $table->bigInteger('total_price');
+            $table->bigInteger('price_to_pay')->default(0);
 
             $table->foreign('user_id')->references('id')->on('user');
         });
