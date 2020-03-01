@@ -17,10 +17,11 @@ class CreateRentTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->boolean('returned')->default(False);
-            $table->timestamp('borrowed_time');
-            $table->timestamp('returned_time')->nullable();
+            $table->dateTime('borrowed_time');
+            $table->dateTime('returned_time')->nullable();
             $table->integer('total_items');
             $table->bigInteger('total_price');
+            $table->bigInteger('price_to_pay')->default(0);
 
             $table->foreign('user_id')->references('id')->on('user');
         });
