@@ -88,6 +88,60 @@ class RentController extends Controller
         /* Show the result */
         return response($rent_list_to_show, 200)->header('Content-Type', "application/json");
     }
+
+    /**
+     * The following method is used to get a transaction by ID
+     * 
+     * @param integer $id Rent ID
+     * @return string message: Gives only failed message
+     * @return array Contains id, user_id, name, returned, borrowed_time, returned_time, total_items, 
+     * total_price, price_to_pay, and rent_detail. rent_detail is an array where each element contains: id, 
+     * cd_id, title, total_items, and total_price
+     */
+    public function getById($id)
+    {
+        /* Query all rents */
+        $rent = RentModel::where("id", $id)->first();
+        if (count($rent) == 0) {
+            $response["message"] = "The transaction you are looking for doesn't exist";
+            return response($response, 404)->header('Content-Type', "application/json");
+        }
+        
+        /*---------- Prepare and show the response ----------*/
+        /* Prepare the data */
+        $related_user = UserModel::where("id", $rent->user_id)->first();
+        $data = array();
+        $data["id"] = $rent->id;
+        $data["user_id"] = $rent->user_id;
+        $data["name"] = $related_user->name;
+        $data["returned"] = $rent->returned;
+        $data["borrowed_time"] = $rent->borrowed_time;
+        $data["returned_time"] = $rent->returned_time;
+        $data["total_items"] = $rent->total_items;
+        $data["total_price"] = $rent->total_price;
+        $data["price_to_pay"] = $rent->price_to_pay;
+        $data["rent_detail"] = array();
+
+        /* Searching for all related rent detail */
+        $related_rent_detail = RentDetailModel::where("rent_id", $rent->id)->get();
+        $rent_detail_data = array();
+        foreach ($related_rent_detail as $detail) {
+            /* Searching related CD */
+            $cd = CdModel::where("id", $detail->cd_id)->first();
+            
+            $detail_data = array();
+            $detail_data["id"] = $detail->id;
+            $detail_data["cd_id"] = $detail->cd_id;
+            $detail_data["title"] = $cd->title;
+            $detail_data["total_items"] = $detail->total_items;
+            $detail_data["total_price"] = $detail->total_price;
+            array_push($rent_detail_data, $detail_data);
+        }
+        array_push($data["rent_detail"], $rent_detail_data);
+
+        /* Show the result */
+        return response($data, 200)->header('Content-Type', "application/json");
+    }
     
     /**
      * The following method is used to begin a transaction
