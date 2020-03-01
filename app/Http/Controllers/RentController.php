@@ -12,6 +12,84 @@ use App\RentDetailModel;
 class RentController extends Controller
 {   
     /**
+     * The following method is used to get all transactions (can be filtered)
+     * 
+     * @param array $request Filter for rent. Contains: returned (true, false, all) and name
+     * @return array Return rent_list: Each element contains id, user_id, name, returned, borrowed_time, 
+     * returned_time, total_items, total_price, price_to_pay, and rent_detail. rent_detail is an array where 
+     * each element contains: id, cd_id, title, total_items, and total_price
+     */
+    public function get(Request $request)
+    {
+        /* Query all rents */
+        $rent_list = RentModel::all();
+
+        /*---------- Filter Proccess ----------*/
+        /* Filter by returned */
+        $returned = $request->get("returned");
+        if ($returned === True or $returned === "True") {
+            $rent_list = $rent_list->where("returned", True);
+        } elseif ($returned === False or $returned === "False") {
+            $rent_list = $rent_list->where("returned", False);
+        }
+
+        /* Filter by name */
+        $name = $request->get("name");
+        if ($name != null) {
+            $filtered_rent_list = array();
+            $users = UserModel::where("name", "LIKE", "%" . $name . "%")->get();
+            foreach ($users as $user) {
+                /* Search all transactions related to this user */
+                $related_user_rent = RentModel::where("user_id", $user->id)->get();
+                foreach ($related_user_rent as $user_rent) {
+                    array_push($filtered_rent_list, $user_rent);
+                }
+            }
+            $rent_list = $filtered_rent_list;
+        }
+        
+        /*---------- Prepare and show the response ----------*/
+        /* Looping through rent_list */
+        $rent_list_to_show = array();
+        foreach ($rent_list as $rent) {
+            /* Prepare the data */
+            $related_user = UserModel::where("id", $rent->user_id)->first();
+            $data = array();
+            $data["id"] = $rent->id;
+            $data["user_id"] = $rent->user_id;
+            $data["name"] = $related_user->name;
+            $data["returned"] = $rent->returned;
+            $data["borrowed_time"] = $rent->borrowed_time;
+            $data["returned_time"] = $rent->returned_time;
+            $data["total_items"] = $rent->total_items;
+            $data["total_price"] = $rent->total_price;
+            $data["price_to_pay"] = $rent->price_to_pay;
+            $data["rent_detail"] = array();
+
+            /* Searching for all related rent detail */
+            $related_rent_detail = RentDetailModel::where("rent_id", $rent->id)->get();
+            $rent_detail_data = array();
+            foreach ($related_rent_detail as $detail) {
+                /* Searching related CD */
+                $cd = CdModel::where("id", $detail->cd_id)->first();
+                
+                $detail_data = array();
+                $detail_data["id"] = $detail->id;
+                $detail_data["cd_id"] = $detail->cd_id;
+                $detail_data["title"] = $cd->title;
+                $detail_data["total_items"] = $detail->total_items;
+                $detail_data["total_price"] = $detail->total_price;
+                array_push($rent_detail_data, $detail_data);
+            }
+            array_push($data["rent_detail"], $rent_detail_data);
+            array_push($rent_list_to_show, $data);
+        }
+
+        /* Show the result */
+        return response($rent_list_to_show, 200)->header('Content-Type', "application/json");
+    }
+    
+    /**
      * The following method is used to begin a transaction
      * 
      * @param array $request Contains: user_id and rent_detail. rent_detail is an array where each element
