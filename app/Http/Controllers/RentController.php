@@ -285,7 +285,7 @@ class RentController extends Controller
         $response["rent"]["returned_time"] = $related_rent->returned_time;
         $response["rent"]["total_items"] = $related_rent->total_items;
         $response["rent"]["total_price"] = $related_rent->total_price;
-        $response["rent"]["total_price"] = $related_rent->price_to_pay;
+        $response["rent"]["price_to_pay"] = $related_rent->price_to_pay;
         return response($response, 200)->header('Content-Type', "application/json");
     }
 }
