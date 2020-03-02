@@ -1,21 +1,29 @@
-# Lumen PHP Framework
+# CD Store API (By: Garry Ariel)
+This API is designed for everyone who runs a CD rental. With this API you can handle the transaction easily. You can insert and update category and CD. You can also add new customer and save their information in database. You can also manage the transaction, where customer can rent more than 1 CD's at a time (but they need to return those CD together, cannot return it one by one).
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/lumen-framework/v/unstable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+## Technology Implementation
+This API is built using Lumen framework (a micro-framework by Laravel) with PHP version 7.0 and using MySQL database version 5.6.
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+## Requirement
+1. You need to install Lumen framework. Before installing Lumen, you will need to install some of the following.
+- PHP (version 7.0 or greater)
+- OpenSSL PHP extension
+- PDO PHP extension
+- Mbstring PHP extension
+- Composer
+2. MySQL database of version 5.6 or greater. To connect to database, go to .env file, and change the following line with your database information.
+- DB_DATABASE
+- DB_USERNAME
+- DB_PASSWORD
 
-## Official Documentation
+## How to Run the Application
+Follow below instructions to run the application.
+1. Open the terminal
+2. Go to cd_store_project folder
+3. Run the following command: php -S localhost:8000 -t public
 
-Documentation for the framework can be found on the [Lumen website](http://lumen.laravel.com/docs).
+## API Blueprint
+For more information about how to use the API's, you can read the detail at api_blueprint.xlsx file.
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Lumen framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+## Contact
+For more information, critic, or advice, please contact me at garryarielcussoy@gmail.com, thank you.
