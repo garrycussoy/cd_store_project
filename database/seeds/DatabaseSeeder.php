@@ -27,21 +27,24 @@ class DatabaseSeeder extends Seeder
             "title" => "Kimi No Na Wa",
             "category_id" => 1,
             "rate" => 8000,
-            "quantity" => 30
+            "quantity" => 30,
+            "created_at" => date("Y-m-d H:i:s")
         ]);
 
         DB::table("cd")->insert([
             "title" => "Tenki No Ko",
             "category_id" => 1,
             "rate" => 10000,
-            "quantity" => 35
+            "quantity" => 35,
+            "created_at" => date("Y-m-d H:i:s")
         ]);
 
         DB::table("cd")->insert([
             "title" => "SWAT",
             "category_id" => 2,
             "rate" => 15000,
-            "quantity" => 10
+            "quantity" => 10,
+            "created_at" => date("Y-m-d H:i:s")
         ]);
     }
 }
