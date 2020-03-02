@@ -11,6 +11,37 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(CategorySeeder::class);
+        /* Seed for category */
+        DB::table("category")->insert([
+            "name" => "Romance",
+            "created_at" => date("Y-m-d H:i:s")
+        ]);
+
+        DB::table("category")->insert([
+            "name" => "Action",
+            "created_at" => date("Y-m-d H:i:s")
+        ]);
+
+        /* Seed for cd */
+        DB::table("cd")->insert([
+            "title" => "Kimi No Na Wa",
+            "category_id" => 1,
+            "rate" => 8000,
+            "quantity" => 30
+        ]);
+
+        DB::table("cd")->insert([
+            "title" => "Tenki No Ko",
+            "category_id" => 1,
+            "rate" => 10000,
+            "quantity" => 35
+        ]);
+
+        DB::table("cd")->insert([
+            "title" => "SWAT",
+            "category_id" => 2,
+            "rate" => 15000,
+            "quantity" => 10
+        ]);
     }
 }
