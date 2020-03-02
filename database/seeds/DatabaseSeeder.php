@@ -65,5 +65,63 @@ class DatabaseSeeder extends Seeder
             "address" => "Jakarta Utara",
             "created_at" => date("Y-m-d H:i:s")
         ]);
+
+        /* Seed for rent */
+        DB::table("rent")->insert([
+            "user_id" => 1,
+            "returned" => False,
+            "borrowed_time" => date("2020-02-20"),
+            "total_items" => 2,
+            "total_price" => 18000,
+            "price_to_pay" => 0
+        ]);
+
+        DB::table("rent")->insert([
+            "user_id" => 1,
+            "returned" => True,
+            "borrowed_time" => date("2020-02-20"),
+            "returned_time" => date("2020-02-21"),
+            "total_items" => 1,
+            "total_price" => 8000,
+            "price_to_pay" => 8000
+        ]);
+
+        DB::table("rent")->insert([
+            "user_id" => 2,
+            "returned" => False,
+            "borrowed_time" => date("2020-02-20"),
+            "total_items" => 2,
+            "total_price" => 30000,
+            "price_to_pay" => 0
+        ]);
+
+        /* Seed for rent detail */
+        DB::table("rent_detail")->insert([
+            "rent_id" => 1,
+            "cd_id" => 1,
+            "total_items" => 1,
+            "total_price" => 8000
+        ]);
+
+        DB::table("rent_detail")->insert([
+            "rent_id" => 1,
+            "cd_id" => 2,
+            "total_items" => 1,
+            "total_price" => 10000
+        ]);
+
+        DB::table("rent_detail")->insert([
+            "rent_id" => 2,
+            "cd_id" => 1,
+            "total_items" => 1,
+            "total_price" => 8000
+        ]);
+
+        DB::table("rent_detail")->insert([
+            "rent_id" => 3,
+            "cd_id" => 3,
+            "total_items" => 2,
+            "total_price" => 30000
+        ]);
     }
 }
