@@ -46,5 +46,24 @@ class DatabaseSeeder extends Seeder
             "quantity" => 10,
             "created_at" => date("Y-m-d H:i:s")
         ]);
+
+        /* Seed for user */
+        DB::table("user")->insert([
+            "name" => "Garry Ariel",
+            "identity_type" => "KTP",
+            "identity_number" => "3177102705990001",
+            "phone_number" => "089611765432",
+            "address" => "Jakarta Selatan",
+            "created_at" => date("Y-m-d H:i:s")
+        ]);
+
+        DB::table("user")->insert([
+            "name" => "Bobi Bola",
+            "identity_type" => "Kartu Pelajar",
+            "identity_number" => "1008957632",
+            "phone_number" => "089611765421",
+            "address" => "Jakarta Utara",
+            "created_at" => date("Y-m-d H:i:s")
+        ]);
     }
 }
